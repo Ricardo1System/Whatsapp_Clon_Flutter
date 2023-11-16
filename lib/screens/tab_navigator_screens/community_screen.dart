@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:whatsapp_clone/theme/classic_theme.dart';
 
 class CommunityScreen extends StatelessWidget {
   const CommunityScreen({Key? key}) : super(key: key);

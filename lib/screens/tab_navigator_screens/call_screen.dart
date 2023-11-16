@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:whatsapp_clone/theme/classic_theme.dart';
-import 'package:whatsapp_clone/theme/shared_preferences/preferences_app_theme.dart';
+import 'package:whatsapp_clone/theme/dark_theme.dart';
+import 'package:whatsapp_clone/theme/theme.dart';
 
 class CallScreen extends StatefulWidget {
    
@@ -14,20 +14,15 @@ class CallScreen extends StatefulWidget {
 class _CallScreenState extends State<CallScreen> {
   @override
   Widget build(BuildContext context) {
+    final appTheme = Provider.of<ThemeChange>(context, listen: false).currenttheme;
+    var isDark = Provider.of<ThemeChange>(context);
     return Scaffold(
       body: Center(
         child: SwitchListTile(
-              title: Text('Dark Mode', style: AppKiiubitTheme.textClassic18),
-              value: PreferencesAppTheme.isDarkMode,
+              title: Text('Dark Mode', style: appTheme.textTheme.bodyMedium ),
+              value: isDark.darkTheme,
               onChanged: (value) {
-
-                PreferencesAppTheme.isDarkMode = value; // Cambia el valor de isDarkMode en local storage
-                final themeProvider = Provider.of<AppKiiubitTheme>(context, listen: false); // Instancia del provider
-      
-                value ? themeProvider.setDarkMode() : themeProvider.setLightMode(); // Llama a un método para establecer el tema
-
-                AppKiiubitTheme.refreshTheme(); // Llama al App Theme para refrescar los colores del tema
-      
+                isDark.darkTheme=value; 
                 setState(() {});
               },
             ),
