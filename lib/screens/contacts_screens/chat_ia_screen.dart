@@ -24,13 +24,13 @@ class ChatIAScreen extends StatelessWidget {
         actions: [
           IconButton(onPressed: () {
             
-          }, icon: Icon(Icons.videocam)),
+          }, icon: const Icon(Icons.videocam)),
           IconButton(onPressed: () {
             
-          }, icon: Icon(Icons.call)),
+          }, icon: const Icon(Icons.call)),
           IconButton(onPressed: () {
             
-          }, icon: Icon(Icons.more_vert)),
+          }, icon: const Icon(Icons.more_vert)),
           
         ],
       ),

@@ -12,7 +12,7 @@ const ColorScheme myColorScheme = ColorScheme(
   onSecondary: Colors.white,
   onError: Colors.black,
   brightness: Brightness.light,
-  surface: Colors.green,
+  surface: Colors.white,
   onSurface: Colors.green,
   error: Colors.red,
    
@@ -20,9 +20,9 @@ const ColorScheme myColorScheme = ColorScheme(
 );
 
 final TextTheme myTextTheme = TextTheme(
-  bodyMedium: TextStyle(fontSize: 25.sp),
-  bodyLarge: TextStyle(fontWeight: FontWeight.bold,fontSize: 30.sp),
-  bodySmall: TextStyle(fontWeight: FontWeight.bold,fontSize: 15.sp),
+  bodyLarge: TextStyle(fontWeight: FontWeight.bold,fontSize: 20.sp),
+  bodyMedium: TextStyle(fontSize: 15.sp),
+  bodySmall: TextStyle(fontWeight: FontWeight.bold,fontSize: 10.sp),
   // Agrega más estilos aquí
 );
 

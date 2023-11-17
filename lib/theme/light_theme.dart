@@ -23,13 +23,14 @@ const ColorScheme myColorScheme = ColorScheme(
 );
 
 final TextTheme myTextTheme = TextTheme(
+  bodyLarge: TextStyle(fontWeight: FontWeight.bold,fontSize: 20.sp),
   bodyMedium: TextStyle(fontSize: 15.sp),
-  bodyLarge: TextStyle(fontWeight: FontWeight.bold,fontSize: 15.sp),
-  bodySmall: TextStyle(fontWeight: FontWeight.bold,fontSize: 15.sp),
+  bodySmall: TextStyle(fontWeight: FontWeight.bold,fontSize: 10.sp),
   // Agrega más estilos aquí
 );
 
 final ThemeData lightThemeFile = ThemeData.light().copyWith(
+  // primaryColor: myColorScheme.onBackground,
   colorScheme: myColorScheme,
   textTheme: myTextTheme,
   inputDecorationTheme: InputDecorationTheme(

@@ -16,13 +16,13 @@ class ChatScreen extends StatelessWidget {
         time: '',
         image: '',
         isIa: true,
+      ),
+      ContactDto(
+        msj: 'Hola prro, te andan buscando los federales',
+        name: 'Miguel Armando Lorenzo',
+        time: '12:00',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRthj1N4v-edrUYVJQPM7OjCjdoJI4zCvMPMQ&usqp=CAU'
       )
-      // ContactDto(
-      //   msj: 'Hola prro, te andan buscando los federales',
-      //   name: 'Miguel Armando Lorenzo',
-      //   time: '12:00',
-      //   image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRthj1N4v-edrUYVJQPM7OjCjdoJI4zCvMPMQ&usqp=CAU'
-      // )
     ];
     return Scaffold(
       floatingActionButton: FloatingActionButton(onPressed: () {
@@ -37,7 +37,7 @@ class ChatScreen extends StatelessWidget {
           itemBuilder: (context, index) {
             return InkWell(
               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatIAScreen(),)),
-              child: CustomCardContact(contact:chatList[0]));
+              child: CustomCardContact(contact:chatList[index]));
           },
         ),
       ),
