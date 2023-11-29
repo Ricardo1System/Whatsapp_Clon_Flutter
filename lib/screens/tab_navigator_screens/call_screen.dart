@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp_clone/theme/dark_theme.dart';
 import 'package:whatsapp_clone/theme/theme.dart';
+import 'package:whatsapp_clone/widgets/custom_page_fix.dart';
 
 class CallScreen extends StatefulWidget {
    
@@ -14,18 +15,11 @@ class CallScreen extends StatefulWidget {
 class _CallScreenState extends State<CallScreen> {
   @override
   Widget build(BuildContext context) {
-    final appTheme = Provider.of<ThemeChange>(context, listen: false).currenttheme;
-    var isDark = Provider.of<ThemeChange>(context);
+    final appTheme = Provider.of<ThemeChange>(context, listen: true).currenttheme;
     return Scaffold(
-      body: Center(
-        child: SwitchListTile(
-              title: Text('Dark Mode', style: appTheme.textTheme.bodyMedium ),
-              value: isDark.darkTheme,
-              onChanged: (value) {
-                isDark.darkTheme=value; 
-                setState(() {});
-              },
-            ),
+      backgroundColor: appTheme.colorScheme.background,
+      body: const Center(
+        child: CustomPageFix(),
       ),
     );
   }

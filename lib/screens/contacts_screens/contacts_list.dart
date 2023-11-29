@@ -1,7 +1,9 @@
  import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:whatsapp_clone/blocs/contact/contact_bloc.dart';
 import 'package:whatsapp_clone/models/contact/contact_dto.dart';
+import 'package:whatsapp_clone/theme/theme.dart';
 import 'package:whatsapp_clone/widgets/custom_card_contact.dart';
  
  
@@ -26,7 +28,9 @@ _SampleItem? selectedMenu;
 
    @override
    Widget build(BuildContext context) {
-     return Scaffold(
+     final appTheme=Provider.of<ThemeChange>(context).currenttheme;
+    return Scaffold(
+      backgroundColor: appTheme.colorScheme.background,
       appBar: AppBar(
         title: Text('Contactos'),
         actions: [

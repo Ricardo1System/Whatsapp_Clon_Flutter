@@ -19,3 +19,7 @@ class SendCode extends AuthEvent {
   SendCode({required this.number});
   // SendCode({required this.number ,required this.code});
 }
+
+class GetProfile extends AuthEvent {
+  GetProfile();
+}

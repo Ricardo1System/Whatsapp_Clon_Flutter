@@ -4,7 +4,7 @@ part of 'user_bloc.dart';
 sealed class UserEvent {}
 
 
-class GetInformationProfile extends UserEvent {
+class GetProfile extends UserEvent {
   
   
 }

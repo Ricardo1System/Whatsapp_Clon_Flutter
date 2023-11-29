@@ -2,18 +2,18 @@ import 'package:meta/meta.dart';
 import 'dart:convert';
 
 class UserDto {
-    int id;
+    int? id;
     String name;
-    String lastName;
     String urlImageProfile;
     String info;
+    String number;
 
     UserDto({
-        required this.id,
+        this.id,
         required this.name,
-        required this.lastName,
-        required this.urlImageProfile,
         required this.info,
+        required this.number,
+        required this.urlImageProfile,
     });
 
     factory UserDto.fromRawJson(String str) => UserDto.fromJson(json.decode(str));
@@ -21,18 +21,18 @@ class UserDto {
     String toRawJson() => json.encode(toJson());
 
     factory UserDto.fromJson(Map<String, dynamic> json) => UserDto(
-        id: json["id"],
-        name: json["name"],
-        lastName: json["lastName"],
-        urlImageProfile: json["urlImageProfile"],
-        info: json["info"],
+        id: json["Id"],
+        name: json["Name"],
+        info: json["Info"],
+        number: json["Number"],
+        urlImageProfile: json["ImageProfile"],
     );
 
     Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
-        "lastName": lastName,
-        "urlImageProfile": urlImageProfile,
         "info": info,
+        "number": number,
+        "urlImageProfile": urlImageProfile,
     };
 }

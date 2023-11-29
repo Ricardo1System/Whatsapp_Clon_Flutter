@@ -20,11 +20,11 @@ class CustomCardContact extends StatelessWidget {
           children: [
             CircleAvatar(
               backgroundColor: appTheme.colorScheme.primary,
-              backgroundImage: contact.image != null
-                  ? Image.network(contact.image!).image
+              backgroundImage: contact.urlImageProfile != null
+                  ? Image.network(contact.urlImageProfile!,scale: 1.0).image
                   : null,
               maxRadius: 30,
-              child: contact.image == null || contact.image == ''
+              child: contact.urlImageProfile == null || contact.urlImageProfile == ''
                   ? !contact.isCompany
                       ? const Icon(Icons.person)
                       : const Icon(Icons.business)

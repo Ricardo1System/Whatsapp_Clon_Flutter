@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 const ColorScheme myColorScheme = ColorScheme(
-  primary: Color(0xFF27374D),
-  secondary: Color(0xFF526D82),
-  background: Color(0xFF9DB2BF),
-  onBackground: Color(0xFFDDE6ED),
+  primary: Color(0xFF2C74B3),
+  secondary: Color(0xFF205295),
+  background: Color(0xFF144272),
+  onBackground: Color(0xFF0A2647),
   onPrimary: Colors.white,
   onSecondary: Colors.white,
   onError: Colors.black,
@@ -27,6 +27,7 @@ final TextTheme myTextTheme = TextTheme(
 );
 
 final ThemeData darkThemeFile=ThemeData.dark().copyWith(
+  backgroundColor: myColorScheme.background,
   colorScheme: myColorScheme,
   
   appBarTheme: AppBarTheme().copyWith(

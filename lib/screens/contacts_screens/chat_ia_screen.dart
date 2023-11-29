@@ -3,22 +3,31 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:whatsapp_clone/theme/theme.dart';
 
 
 class ChatIAScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final appTheme=Provider.of<ThemeChange>(context).currenttheme;
     return Scaffold(
+      backgroundColor: appTheme.colorScheme.background,
       appBar: AppBar(
-        leading:  IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back_rounded)),
-        title: const Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        automaticallyImplyLeading: false,
+        titleSpacing: 0.0,
+        
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            IconButton(onPressed: () {
+              Navigator.pop(context);
+            }, icon: Icon(Icons.arrow_back_rounded)),
           CircleAvatar(
-            child: Icon(Icons.person),
+            backgroundColor: appTheme.colorScheme.background,
+            child: Icon(Icons.person, color: appTheme.colorScheme.primary,),
           ),
-          Spacer(),
-          Text('IA: Si y No')
+          SizedBox(width: 10,),
+          const Text('IA: Si y No', textAlign: TextAlign.start,)
         ]) ,
         centerTitle: true,
         actions: [
@@ -127,8 +136,9 @@ class _ImageBubble extends StatelessWidget {
     return ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: Image.network(
-          '$img',
+          img,
           width: size.width * 0.7,
+          scale: 1.0,
           height: 150,
           fit: BoxFit.cover,
           loadingBuilder: (context, child, loadingProgress) {

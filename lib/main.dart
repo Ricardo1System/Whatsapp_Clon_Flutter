@@ -1,10 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:whatsapp_clone/blocs/chat/chat_bloc.dart';
 import 'package:whatsapp_clone/blocs/contact/contact_bloc.dart';
 import 'package:whatsapp_clone/firebase_options.dart';
 import 'package:whatsapp_clone/repositories/contact_repository.dart';
@@ -12,7 +14,6 @@ import 'package:whatsapp_clone/repositories/user_repository.dart';
 import 'package:whatsapp_clone/screens/contacts_screens/chat_ia_screen.dart'; 
 import 'package:whatsapp_clone/screens/screen.dart';
 import 'package:whatsapp_clone/settings.dart';
-import 'package:whatsapp_clone/theme/dark_theme.dart';
 import 'package:whatsapp_clone/theme/theme.dart';
 
 import 'blocs/auth/auth_bloc.dart';
@@ -25,6 +26,8 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  final storage = FirebaseStorage.instance;
 
 
 
@@ -48,7 +51,11 @@ Future<void> main() async {
         BlocProvider<ContactBloc>(
           lazy: false,
           create: (context) => ContactBloc(),
-        )
+        ),
+        BlocProvider<ChatBloc>(
+          lazy: false,
+          create: (context) => ChatBloc(),
+        ),
       ],
       child: MyApp(
         userRepository: userRepository,

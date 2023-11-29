@@ -8,7 +8,7 @@ const ColorScheme myColorScheme = ColorScheme(
   // secondary: Color(0xFFE25E3E),
   // onBackground: Color(0xFFFFBB5C),
   // background: Color(0xFFFF9B50),
-  primary: Color(0xFF7286D3),
+  primary: Color.fromARGB(255, 78, 101, 190),
   secondary: Color(0xFF8EA7E9),
   background: Color(0xFFE5E0FF),
   onBackground: Color(0xFFFFF2F2),
@@ -16,7 +16,7 @@ const ColorScheme myColorScheme = ColorScheme(
   onSecondary: Colors.white,
   onError: Colors.white,
   brightness: Brightness.light,
-  surface: Color(0xFF7286D3),
+  surface: Color.fromARGB(255, 78, 101, 190),
   onSurface: Color(0xFFFFF2F2),
   error: Colors.red, 
 

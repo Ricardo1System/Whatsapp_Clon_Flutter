@@ -26,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen>
     final appTheme = Provider.of<ThemeChange>(context).currenttheme;
     SampleItem? selectedMenu;
     return Scaffold(
+      backgroundColor: appTheme.colorScheme.background,
       appBar: AppBar(
         title: const Text('Whatsapp Clone'),
         bottom: TabBar(
