@@ -9,9 +9,10 @@ import 'package:provider/provider.dart';
 import 'package:whatsapp_clone/blocs/chat/chat_bloc.dart';
 import 'package:whatsapp_clone/blocs/contact/contact_bloc.dart';
 import 'package:whatsapp_clone/firebase_options.dart';
+import 'package:whatsapp_clone/providers/chat_ai_provider.dart';
+import 'package:whatsapp_clone/providers/current_user_provider.dart';
 import 'package:whatsapp_clone/repositories/contact_repository.dart';
 import 'package:whatsapp_clone/repositories/user_repository.dart';
-import 'package:whatsapp_clone/screens/contacts_screens/chat_ia_screen.dart'; 
 import 'package:whatsapp_clone/screens/screen.dart';
 import 'package:whatsapp_clone/settings.dart';
 import 'package:whatsapp_clone/theme/theme.dart';
@@ -27,10 +28,6 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  final storage = FirebaseStorage.instance;
-
-
-
   final UserRepository userRepository = UserRepository();
   final ContactRepository contactRepository = ContactRepository();
 
@@ -43,6 +40,11 @@ Future<void> main() async {
         ChangeNotifierProvider(
           create: (_) =>
               ChatAIProvider(),
+        ),
+        ChangeNotifierProvider(
+          lazy: false,
+          create: (_) =>
+              CurrentUserProvider(),
         ),
         BlocProvider<AuthBloc>(
           lazy: false,
@@ -82,7 +84,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
     // Escuchar cambios en el estado de autenticación
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null) {
@@ -103,7 +104,7 @@ class _MyAppState extends State<MyApp> {
           create: (_) => SettingsApp(AppTheme.light),
         ),
         RepositoryProvider<UserRepository>(
-          // lazy: false,
+          lazy: false,
           create: (BuildContext context) => widget.userRepository,
         ),
         RepositoryProvider<ContactRepository>(

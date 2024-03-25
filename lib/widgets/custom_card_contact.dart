@@ -20,7 +20,7 @@ class CustomCardContact extends StatelessWidget {
           children: [
             CircleAvatar(
               backgroundColor: appTheme.colorScheme.primary,
-              backgroundImage: contact.urlImageProfile != null
+              backgroundImage: contact.urlImageProfile != null && contact.urlImageProfile != ""
                   ? Image.network(contact.urlImageProfile!,scale: 1.0).image
                   : null,
               maxRadius: 30,

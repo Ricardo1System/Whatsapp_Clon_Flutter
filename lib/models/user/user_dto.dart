@@ -35,4 +35,18 @@ class UserDto {
         "number": number,
         "urlImageProfile": urlImageProfile,
     };
+
+    UserDto copyWith({
+    int? id,
+    String? name,
+    String? urlImageProfile,
+    String? info,
+    String? number,
+  }) =>
+      UserDto(
+        name: name ?? this.name,
+        info: info ?? this.info,
+        number: number ?? this.number,
+        urlImageProfile: urlImageProfile ?? this.urlImageProfile,
+      );
 }

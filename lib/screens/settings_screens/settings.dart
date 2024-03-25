@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp_clone/blocs/user/user_bloc.dart';
 import 'package:whatsapp_clone/models/user/user_dto.dart';
+import 'package:whatsapp_clone/providers/current_user_provider.dart';
 import 'package:whatsapp_clone/repositories/user_repository.dart';
 import 'package:whatsapp_clone/screens/settings_screens/profile_screen.dart';
 import 'package:whatsapp_clone/screens/settings_screens/settings_screens.dart';
@@ -19,22 +20,17 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  UserBloc? userBloc;
-  UserDto? user;
+
 
   @override
   void initState() {
-    userBloc = UserBloc(
-        userRepository: RepositoryProvider.of<UserRepository>(context));
-    userBloc!.add(GetProfile());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final appTheme =
-        Provider.of<ThemeChange>(context, listen: true).currenttheme;
-    var size = MediaQuery.of(context).size;
+    final appTheme = Provider.of<ThemeChange>(context, listen: true).currenttheme;
+    final currentUser = Provider.of<CurrentUserProvider>(context, listen: true);
     return Scaffold(
         backgroundColor: appTheme.colorScheme.background,
         appBar: AppBar(
@@ -47,61 +43,43 @@ class _SettingsScreenState extends State<SettingsScreen> {
             IconButton(onPressed: () {}, icon: const Icon(Icons.search))
           ],
         ),
-        body: BlocListener<UserBloc, UserState>(
-          bloc: userBloc,
-          listener: (context, state) {
-            if (state is GetInformationLoading) {
-              showProgress(context);
-            }
-            if (state is GetInformationLoaded) {
-              hideProgress(context);
-              setState(() {
-                user = state.user;
-              });
-            }
-          },
-          child: BlocBuilder<UserBloc, UserState>(
-            bloc: userBloc,
-            builder: (context, state) {
-              if (user != null) {
-                return Center(
-                  // child: _OptionItem(size: size),
+        body:  Center(
                   child: Column(
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 3.0),
+                            horizontal: 8.0, vertical: 3.0), 
                         child: Column(
                           children: [
                             InkWell(
                               onTap: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage(user:user!) ,) );
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage() ,) );
                               },
                               child: SizedBox(
                                 width: double.infinity,
                                 child: Row(
                                   children: [
                                     Hero(
-                                      tag: user!.number,
+                                      tag: currentUser.loadUserProperties.number,
                                       child: CircleAvatar(
-                                        backgroundImage: user!.urlImageProfile!=""? NetworkImage( user!.urlImageProfile ) : null,
+                                        backgroundImage: currentUser.loadUserProperties.urlImageProfile!=""? NetworkImage( currentUser.loadUserProperties.urlImageProfile ) : null,
                                         backgroundColor:
                                             appTheme.colorScheme.primary,
                                         maxRadius: 30,
-                                        child: user!.urlImageProfile==""? Icon(Icons.person) : null,
+                                        child: currentUser.loadUserProperties.urlImageProfile==""? const Icon(Icons.person) : null,
                                       ),
                                     ),
                                     Expanded(
                                       child: ListTile(
                                         title: Text(
-                                          '${user!.name}',
+                                          currentUser.loadUserProperties.name,
                                           style: appTheme.textTheme.bodyMedium!
                                               .copyWith(
                                                   color: appTheme
                                                       .colorScheme.surface),
                                         ),
-                                        // title: Text(user.name),
-                                        subtitle: Text('${user!.info}',
+                                        // title: Text(currentUser.loadUserProperties..name),
+                                        subtitle: Text(currentUser.loadUserProperties.info,
                                             style: appTheme.textTheme.bodyMedium!
                                                 .copyWith(
                                                     color: appTheme
@@ -150,12 +128,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ],
                   ),
-                );
-              }
-              return Container();
-            },
-          ),
-        ));
+                ),
+            );
   }
 
   _logOut() {

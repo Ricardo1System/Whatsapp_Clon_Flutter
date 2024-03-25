@@ -32,7 +32,7 @@ final TextTheme myTextTheme = TextTheme(
 final ThemeData lightThemeFile = ThemeData.light().copyWith(
   // primaryColor: myColorScheme.onBackground,
   colorScheme: myColorScheme,
-  textTheme: myTextTheme,
+  // textTheme: myTextTheme,
   inputDecorationTheme: InputDecorationTheme(
     labelStyle: const TextStyle(
       color: Colors.red,

@@ -78,7 +78,7 @@ class _bodyChatList extends StatelessWidget {
         itemCount: chatList.length,
         itemBuilder: (context, index) {
           return InkWell(
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatIAScreen(),)),
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ChatIAScreen(),)),
             child: FadeInUp(
               // duration: Duration(seconds: 1),
               // from: 0.0,

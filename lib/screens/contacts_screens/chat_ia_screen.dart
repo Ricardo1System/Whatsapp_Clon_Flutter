@@ -3,10 +3,13 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:whatsapp_clone/providers/chat_ai_provider.dart';
 import 'package:whatsapp_clone/theme/theme.dart';
 
 
 class ChatIAScreen extends StatelessWidget {
+  const ChatIAScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final appTheme=Provider.of<ThemeChange>(context).currenttheme;
@@ -21,12 +24,12 @@ class ChatIAScreen extends StatelessWidget {
           children: [
             IconButton(onPressed: () {
               Navigator.pop(context);
-            }, icon: Icon(Icons.arrow_back_rounded)),
+            }, icon: const Icon(Icons.arrow_back_rounded)),
           CircleAvatar(
             backgroundColor: appTheme.colorScheme.background,
             child: Icon(Icons.person, color: appTheme.colorScheme.primary,),
           ),
-          SizedBox(width: 10,),
+          const SizedBox(width: 10,),
           const Text('IA: Si y No', textAlign: TextAlign.start,)
         ]) ,
         centerTitle: true,
@@ -49,9 +52,7 @@ class ChatIAScreen extends StatelessWidget {
 }
 
 class _ChatView extends StatelessWidget {
-  const _ChatView({
-    super.key,
-  });
+  const _ChatView();
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +149,7 @@ class _ImageBubble extends StatelessWidget {
               height: 150,
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child:
-                  const Center(child: Text('Mi amor esta enviando un mesnaje')),
+                  const Center(child: Text('La IA ha enviando un mensaje')),
             );
           },
           errorBuilder: (context, error, stackTrace) {
@@ -183,7 +184,7 @@ class MyMessageBubble extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal:20.0, vertical: 10.0),
-            child: Text('$message', style: const TextStyle(color: Colors.white),),
+            child: Text(message, style: const TextStyle(color: Colors.white),),
           ),
         ),
         const SizedBox(height: 10,)
@@ -199,7 +200,6 @@ class MessageFieldBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     final TextEditingController textController = TextEditingController();
     final focusNode=FocusNode();
 
@@ -239,46 +239,7 @@ class MessageFieldBox extends StatelessWidget {
   }
 }
 
-class ChatAIProvider extends ChangeNotifier {
-  final ScrollController chatScrollcontroller = ScrollController();
-  final GetYesNotAnswer getYesNotAnswer=GetYesNotAnswer();
 
-  List<Message> messageList = [
-  ];
-
-  Future<void> sendMessage(String text) async {
-    if (text.isEmpty)return;
-    final msj = Message(fromWho: FromWho.me, text: text);
-    messageList.add(msj);
-
-    if (text.endsWith('?')) {
-      await herReply();
-    }
-    notifyListeners();
-    moveScrollToBotton();
-  }
-
-  Future<void> moveScrollToBotton()async {
-    Future.delayed(const Duration(milliseconds: 300));
-    chatScrollcontroller.animateTo(
-      chatScrollcontroller.position.maxScrollExtent,
-      duration: const Duration(milliseconds:300 ),
-      curve: Curves.easeOut,
-    );
-  }
-
-  Future<void> herReply ()async{
-    try {
-      final herMessage = await getYesNotAnswer.getAnswer();
-    messageList.add(herMessage);
-    moveScrollToBotton();
-      notifyListeners();
-    } catch (e) {
-      messageList.add(Message(text: e.toString(), fromWho: FromWho.me));
-    }
-    
-  }
-}
 
 class Message {
 
