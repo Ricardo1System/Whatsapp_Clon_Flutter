@@ -1,7 +1,5 @@
-
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,6 +12,7 @@ import 'package:whatsapp_clone/providers/current_user_provider.dart';
 import 'package:whatsapp_clone/repositories/contact_repository.dart';
 import 'package:whatsapp_clone/repositories/user_repository.dart';
 import 'package:whatsapp_clone/screens/screen.dart';
+import 'package:whatsapp_clone/services/firebase/auth_service.dart';
 import 'package:whatsapp_clone/settings.dart';
 import 'package:whatsapp_clone/theme/theme.dart';
 
@@ -27,6 +26,11 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await FirebaseAppCheck.instance.activate(
+    // webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key'), Web
+    androidProvider: AndroidProvider.debug, //Android
+    // appleProvider: AppleProvider.appAttest, IOS
+  );
 
   final UserRepository userRepository = UserRepository();
   final ContactRepository contactRepository = ContactRepository();
@@ -34,17 +38,14 @@ Future<void> main() async {
   runApp(MultiBlocProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) =>
-              ThemeChange(1),
+          create: (_) => ThemeChange(1),
         ),
         ChangeNotifierProvider(
-          create: (_) =>
-              ChatAIProvider(),
+          create: (_) => ChatAIProvider(),
         ),
         ChangeNotifierProvider(
           lazy: false,
-          create: (_) =>
-              CurrentUserProvider(),
+          create: (_) => CurrentUserProvider(),
         ),
         BlocProvider<AuthBloc>(
           lazy: false,
@@ -66,7 +67,10 @@ Future<void> main() async {
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key, required this.userRepository, required this.contactRepository});
+  const MyApp(
+      {super.key,
+      required this.userRepository,
+      required this.contactRepository});
 
   final UserRepository userRepository;
   final ContactRepository contactRepository;
@@ -76,22 +80,17 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
-   AuthBloc authBloc = AuthBloc();
-  bool isAuthenticate=false;
-  
+  AuthService authService = AuthService();
+  AuthBloc authBloc = AuthBloc();
+  bool isAuthenticate = false;
 
   @override
   void initState() {
     super.initState();
-    // Escuchar cambios en el estado de autenticación
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      if (user == null) {
-        isAuthenticate = false;
-      } else {
-        isAuthenticate = true;
-      }
-      setState(() {});
+    authService.isAuthenticated.listen((response) {
+      setState(() {
+        isAuthenticate = response;
+      });
     });
   }
 
@@ -109,7 +108,7 @@ class _MyAppState extends State<MyApp> {
         ),
         RepositoryProvider<ContactRepository>(
           // lazy: false,
-          create: (BuildContext context) => widget.contactRepository ,
+          create: (BuildContext context) => widget.contactRepository,
         ),
       ],
       child: Consumer<SettingsApp>(
@@ -120,16 +119,15 @@ class _MyAppState extends State<MyApp> {
             designSize: const Size(360, 690),
             builder: (context, child) {
               return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              title: 'Flutter Demo',
-              theme: Provider.of<ThemeChange>(context).currenttheme,
-              home:  isAuthenticate? const HomeScreen():const LoginPage(),
-            );
+                debugShowCheckedModeBanner: false,
+                title: 'Flutter Demo',
+                theme: Provider.of<ThemeChange>(context).currenttheme,
+                home: isAuthenticate ? const HomeScreen() : const LoginPage(),
+              );
             },
           );
         },
       ),
     );
   }
-} 
-
+}

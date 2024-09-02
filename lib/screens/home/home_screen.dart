@@ -3,12 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp_clone/blocs/user/user_bloc.dart';
 import 'package:whatsapp_clone/models/user/user_dto.dart';
+import 'package:whatsapp_clone/models/widgets/pop_menu_item_data.dart';
 import 'package:whatsapp_clone/providers/current_user_provider.dart';
 import 'package:whatsapp_clone/repositories/user_repository.dart';
 import 'package:whatsapp_clone/screens/screen.dart';
 import 'package:whatsapp_clone/screens/settings_screens/settings_screens.dart';
 import 'package:whatsapp_clone/theme/theme.dart';
 import 'package:whatsapp_clone/utils/common_dialog.dart';
+import 'package:whatsapp_clone/widgets/custom_popup_menu_button.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen>
   TabController? _tabController;
   UserBloc? userBloc;
   UserDto? user;
+  _SampleItem? selectedMenu;
   @override
   void initState() {
     _tabController = TabController(length: 4, vsync: this, initialIndex: 1);
@@ -31,11 +34,32 @@ class _HomeScreenState extends State<HomeScreen>
     super.initState();
   }
 
+  void onSelected (_SampleItem item) {
+              switch (item) {
+                case _SampleItem.itemFive:
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SettingsScreen(),
+                      ));
+                  break;
+                default:
+              }
+            }
+
   @override
   Widget build(BuildContext context) {
     final appTheme = Provider.of<ThemeChange>(context).currenttheme;
     final userProvider = Provider.of<CurrentUserProvider>(context, listen: true);
-    SampleItem? selectedMenu;
+    final itemDataList = <PopupMenuItemData<_SampleItem>>[
+     PopupMenuItemData<_SampleItem>(value: _SampleItem.itemOne, child: 'Nuevo grupo'),
+     PopupMenuItemData<_SampleItem>(value: _SampleItem.itemTwo, child: 'Nueva difusión'),
+     PopupMenuItemData<_SampleItem>(value: _SampleItem.itemThree, child: 'Dispositivos vinculados'),
+     PopupMenuItemData<_SampleItem>(value: _SampleItem.itemFour, child: 'Mensajes destacados'),
+     PopupMenuItemData<_SampleItem>(value: _SampleItem.itemFive, child: 'Ajustes'),
+    ]; 
+
+    
     return Scaffold(
       backgroundColor: appTheme.colorScheme.background,
       appBar: AppBar(
@@ -64,72 +88,18 @@ class _HomeScreenState extends State<HomeScreen>
           IconButton(
               onPressed: () {}, icon: const Icon(Icons.camera_alt_outlined)),
           IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
-          // IconButton(onPressed: () {
-          //   // Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsScreen(),) );
-          // }, icon: const Icon(Icons.more_vert_rounded)),
-          PopupMenuButton<SampleItem>(
+          CustomPopuoMenuButton(
             initialValue: selectedMenu,
-            surfaceTintColor: appTheme.colorScheme.primary,
-            shadowColor: appTheme.colorScheme.surface,
-            position: PopupMenuPosition.under,
-            onSelected: (SampleItem item) {
-              setState(() {
-                selectedMenu = item;
-              });
-              switch (item) {
-                case SampleItem.itemFive:
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SettingsScreen(),
-                      ));
-                  break;
-                default:
-              }
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<SampleItem>>[
-              PopupMenuItem<SampleItem>(
-                value: SampleItem.itemOne,
+            onSelected: (value) => onSelected(value!),
+            itemBuilder: () => List.generate(itemDataList.length, (index) => PopupMenuItem<_SampleItem>(
+                value: itemDataList[index].value,
                 child: Text(
-                  'Nuevo grupo',
+                  itemDataList[index].child,
                   style: appTheme.textTheme.bodyMedium!
                       .copyWith(color: appTheme.colorScheme.surface),
                 ),
-              ),
-              PopupMenuItem<SampleItem>(
-                value: SampleItem.itemTwo,
-                child: Text(
-                  'Nueva difusión',
-                  style: appTheme.textTheme.bodyMedium!
-                      .copyWith(color: appTheme.colorScheme.surface),
-                ),
-              ),
-              PopupMenuItem<SampleItem>(
-                value: SampleItem.itemThree,
-                child: Text(
-                  'Dispositivos vinculados',
-                  style: appTheme.textTheme.bodyMedium!
-                      .copyWith(color: appTheme.colorScheme.surface),
-                ),
-              ),
-              PopupMenuItem<SampleItem>(
-                value: SampleItem.itemFour,
-                child: Text(
-                  'Mensajes destacados',
-                  style: appTheme.textTheme.bodyMedium!
-                      .copyWith(color: appTheme.colorScheme.surface),
-                ),
-              ),
-              PopupMenuItem<SampleItem>(
-                value: SampleItem.itemFive,
-                child: Text(
-                  'Ajustes',
-                  style: appTheme.textTheme.bodyMedium!
-                      .copyWith(color: appTheme.colorScheme.surface),
-                ),
-              ),
-            ],
-          ),
+              )),
+          )
         ],
       ),
       // bottomNavigationBar: ,
@@ -147,15 +117,14 @@ class _HomeScreenState extends State<HomeScreen>
               });
             }
           },
-        child: _body(tabController: _tabController),
+        child: _Body(tabController: _tabController),
       ),
     );
   }
 }
 
-class _body extends StatelessWidget {
-  const _body({
-    super.key,
+class _Body extends StatelessWidget {
+  const _Body({
     required TabController? tabController,
   }) : _tabController = tabController;
 
@@ -175,10 +144,12 @@ class _body extends StatelessWidget {
   }
 }
 
-enum SampleItem {
+enum _SampleItem {
   itemOne,
   itemTwo,
   itemThree,
   itemFour,
   itemFive,
 }
+
+

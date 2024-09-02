@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp_clone/blocs/chat/chat_bloc.dart';
-import 'package:whatsapp_clone/models/contact/contact_dto.dart';
+import 'package:whatsapp_clone/models/chat/chat_dto.dart';
+import 'package:whatsapp_clone/screens/chat/view_chat_screen.dart';
 import 'package:whatsapp_clone/screens/contacts_screens/chat_ia_screen.dart';
 import 'package:whatsapp_clone/screens/contacts_screens/contacts_list.dart';
 import 'package:whatsapp_clone/theme/theme.dart';
+import 'package:whatsapp_clone/widgets/custom_card_chat.dart';
 import 'package:whatsapp_clone/widgets/custom_card_contact.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -17,9 +19,9 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  ChatBloc _chatBloc=ChatBloc();
-  List<ContactDto> chatList=[
-    ContactDto(
+  final ChatBloc _chatBloc = ChatBloc();
+  List<ChatDto> chatList=[
+    ChatDto(
         msj: '',
         name: 'Chat IA YesNo',
         time: '',
@@ -43,7 +45,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       backgroundColor: appTheme.colorScheme.background,
       floatingActionButton: FloatingActionButton(onPressed: () {
-        // Navigator.push(context, MaterialPageRoute(builder: (context) => ContactListPage(),));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const ContactListPage(),));
       },
       child: const Icon(Icons.chat),
       ),
@@ -56,19 +58,19 @@ class _ChatScreenState extends State<ChatScreen> {
             });
           }
         },
-        child: _bodyChatList(chatList: chatList),
+        child: BodyChatList(chatList: chatList),
       ),
     );
   }
 }
 
-class _bodyChatList extends StatelessWidget {
-  const _bodyChatList({
+class BodyChatList extends StatelessWidget {
+  const BodyChatList({
     super.key,
     required this.chatList,
   });
 
-  final List<ContactDto> chatList;
+  final List<ChatDto> chatList;
 
   @override
   Widget build(BuildContext context) {
@@ -78,12 +80,19 @@ class _bodyChatList extends StatelessWidget {
         itemCount: chatList.length,
         itemBuilder: (context, index) {
           return InkWell(
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ChatIAScreen(),)),
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        chatList[index].name == 'Chat IA YesNo'
+                            ? const ChatIAScreen()
+                            : ViewChatScreen(chatId:chatList[index].chatId!),
+                  )),
             child: FadeInUp(
               // duration: Duration(seconds: 1),
               // from: 0.0,
               delay: Duration(milliseconds: 50*(1+index)),
-              child: CustomCardContact(contact:chatList[index])));
+              child: CustomCardChat(contact:chatList[index])));
         },
       ),
     );

@@ -8,7 +8,7 @@ final class ChatInitial extends ChatState {}
 
 class GetChatsLoading extends ChatState {}
 class GetChatsLoaded extends ChatState {
-  final List<ContactDto> contactChats;
+  final List<ChatDto> contactChats;
   GetChatsLoaded({required this.contactChats});
 }
 class GetChatsError extends ChatState {}

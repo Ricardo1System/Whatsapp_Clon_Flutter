@@ -1,16 +1,15 @@
 import 'dart:io';
 
 import 'package:animate_do/animate_do.dart';
-import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:whatsapp_clone/models/user/user_dto.dart';
 import 'package:whatsapp_clone/providers/current_user_provider.dart';
-import 'package:whatsapp_clone/screens/camera_screen.dart';
+import 'package:whatsapp_clone/services/firebase/storage_service.dart';
 import 'package:whatsapp_clone/theme/theme.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -23,6 +22,8 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final storage = FirebaseStorage.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final StorageService storageService = StorageService();
+  final ImagePicker picker = ImagePicker();
   // String fileUrl="";
   
 
@@ -30,22 +31,39 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       final currentUserProvider = Provider.of<CurrentUserProvider>(context,listen: false);
       final User? user = FirebaseAuth.instance.currentUser;
-      String filePath =
-          'uploads/${DateTime.now().millisecondsSinceEpoch}_${file.name}';
-      Reference ref = storage.ref().child(filePath);
-      await ref.putFile(File(file.path));
-      String fileUrl = await ref.getDownloadURL();
+      String fileUrl = await storageService.uploadImageProfile(file);
       currentUserProvider.updateProfileUrl(fileUrl);
-      // setState(() {});
       await firestore.collection('users').doc(user!.uid).update({
         'ImageProfile': fileUrl,
       }).catchError((error) {
         print('Error al actualizar el perfil del usuario: $error');
       });
+      Navigator.pop(context);
       print('Archivo cargado con éxito. URL: $fileUrl');
     } catch (e) {
       print('Error al cargar el archivo: $e');
     }
+  }
+
+
+  deleteimageProfile() async {
+    final currentUserProvider = Provider.of<CurrentUserProvider>(context,listen: false);
+    final User? user = FirebaseAuth.instance.currentUser;
+    String imageForDelete = currentUserProvider.loadUserProperties.urlImageProfile;
+    print(imageForDelete);
+    Reference ref = storage.ref(imageForDelete).child('Uploads/$imageForDelete');
+    // Reference ref = storage.instance.refFromURL(imageUrl);
+    try {
+      await ref.delete();
+    } catch (e) {
+      print('Error al eliminar en la base de datos');
+    }
+    currentUserProvider.updateProfileUrl("");
+    await firestore.collection('users').doc(user!.uid).update({
+      'ImageProfile': "",
+    }).catchError((onError){
+      print('Error al eliminar la foto de perfil');
+    });
   }
 
   @override
@@ -164,7 +182,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: TextStyle(
                         fontWeight: FontWeight.w800, color: appTheme.colorScheme.surface),
                   ),
-                  const Icon(Icons.delete)
+                  InkWell(
+                    onTap: () => deleteimageProfile(),
+                    child: const Icon(Icons.delete))
                 ],
               ),
               Row(
@@ -173,15 +193,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   MultimediaOption(
                     text: 'Cámara',
                     icon: Icons.camera_alt,
-                    primaryColor: appTheme.colorScheme.primary,
-                    secundaryColor: appTheme.colorScheme.secondary,
-                    backgroundColor: appTheme.colorScheme.surface,
+                    appTheme: appTheme,
                     onTap: () async {
-                      var result = await (Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CameraScreen(),
-                          )));
+                      final XFile? result = await picker.pickImage(source: ImageSource.camera);
                       if (result != null) {
                         saveFile(result);
                       }
@@ -190,19 +204,23 @@ class _ProfilePageState extends State<ProfilePage> {
                   MultimediaOption(
                     text: 'Galeria',
                     icon: Icons.image,
-                    primaryColor: appTheme.colorScheme.primary,
-                    secundaryColor: appTheme.colorScheme.secondary,
-                    backgroundColor: appTheme.colorScheme.surface,
-                    onTap: () {},
+                    appTheme: appTheme,
+                    onTap: () async {
+                      final XFile? result =
+                          await picker.pickImage(source: ImageSource.gallery);
+                      if (result != null) {
+                        saveFile(result);
+                      }
+                    },
                   ),
-                  MultimediaOption(
-                    text: 'Internet',
-                    icon: Icons.download,
-                    primaryColor: appTheme.colorScheme.primary,
-                    secundaryColor: appTheme.colorScheme.secondary,
-                    backgroundColor: appTheme.colorScheme.surface,
-                    onTap: () {},
-                  ),
+                  // MultimediaOption(
+                  //   text: 'Internet',
+                  //   icon: Icons.download,
+                  //   primaryColor: appTheme.colorScheme.primary,
+                  //   secundaryColor: appTheme.colorScheme.secondary,
+                  //   backgroundColor: appTheme.colorScheme.surface,
+                  //   onTap: () {},
+                  // ),
                 ],
               ),
             ],
@@ -211,22 +229,21 @@ class _ProfilePageState extends State<ProfilePage> {
       },
     );
   }
+  
+  
 }
 
 class MultimediaOption extends StatelessWidget {
   final String text;
   final IconData icon;
   final Function() onTap;
-  final Color primaryColor;
-  final Color secundaryColor;
-  final Color backgroundColor;
+  final ThemeData appTheme;
   const MultimediaOption({
     super.key,
     required this.text,
     required this.icon,
     required this.onTap,
-    required this.primaryColor,
-    required this.secundaryColor, required this.backgroundColor,
+    required this.appTheme,
   });
 
   @override
@@ -239,7 +256,7 @@ class MultimediaOption extends StatelessWidget {
             height: 50.h,
             width: 50.w,
             decoration: BoxDecoration(
-                border: Border.all(color: primaryColor),
+                border: Border.all(color: appTheme.colorScheme.primary),
                 shape: BoxShape.circle),
             child: Icon(icon),
           ),
@@ -247,7 +264,7 @@ class MultimediaOption extends StatelessWidget {
             padding: const EdgeInsets.only(top: 15),
             child: Text(
               text,
-              style: TextStyle(color: backgroundColor),
+              style: TextStyle(color: appTheme.colorScheme.surface),
             ),
           ),
         ],
